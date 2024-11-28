@@ -28,12 +28,15 @@
 const express = require('express');
 const app = express();
 const taskRoutes = require('./route/taskRoutes');
-
+const authRoutes = require('./route/authRoutes');
 // Middleware to parse JSON
-app.use(express.json());
+app.use(express.json());  // Parses JSON requests
+app.use(express.urlencoded({ extended: true }));  // Parses URL-encoded requests (optional)
 
+app.use('/', authRoutes);
 // Use task routes
 app.use('/api', taskRoutes);
+
 
 // Start the server
 const PORT = 3000;

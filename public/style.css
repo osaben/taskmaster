@@ -1,0 +1,18 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  input, select, textarea, button {
+    margin: 5px;
+    padding: 8px;
+  }
+  #task-list {
+    list-style: none;
+    padding: 0;
+  }
+  .task-item {
+    background-color: #f0f0f0;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  
