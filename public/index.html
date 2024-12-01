@@ -198,7 +198,7 @@
 
     // Fetch and display tasks
     async function fetchTasks() {
-      const res = await fetch('/api/tasks', {
+      const res = await fetch('http://localhost:3000/api/tasks', {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
@@ -229,7 +229,7 @@
 
       const newTask = { title, description, priority, deadline };
 
-      const res = await fetch('/api/tasks', {
+      const res = await fetch('http://localhost:3000/api/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -259,7 +259,7 @@
         deadline: taskDeadline
       };
 
-      fetch(`/api/tasks/${taskId}`, {
+      fetch(`http://localhost:3000/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -279,7 +279,7 @@
     // Delete Task function
     function deleteTask(taskId) {
       if (confirm("Are you sure you want to delete this task?")) {
-        fetch(`/api/tasks/${taskId}`, {
+        fetch(`http://localhost:3000/api/tasks/${taskId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${authToken}`
