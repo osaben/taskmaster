@@ -20,9 +20,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Serve login.html at the root URL
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'login.html'));
-// });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

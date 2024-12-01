@@ -5,23 +5,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Management System</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #auth-container, #task-container {
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 50px;
+    }
+
+    #auth-container h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus, select:focus, button:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #filters {
+      margin-bottom: 20px;
+    }
+
+    #filters input, #filters select {
+      width: auto;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    ul#task-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f8f9fa;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    li button {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    li button:hover {
+      background-color: #c82333;
+    }
+
+    .logout-button {
+      background-color: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .logout-button:hover {
+      background-color: #c82333;
+    }
+
+    p a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <h1>Task Management System</h1>
+  <h1 >Task Management System</h1>
 
   <!-- Login/Register Forms -->
-  <div id="auth-container">
+  <div id="auth-container" style="display: none;">
     <h2>Login</h2>
     <form id="login-form">
       <input type="text" id="login-username" placeholder="Username" required>
       <input type="password" id="login-password" placeholder="Password" required>
       <button type="submit">Login</button>
     </form>
-    <p>Dont have an account? <a href="/register.html">Register here</a></p>
+    <p>Don't have an account? <a href="/register.html">Register here</a></p>
   </div>
 
   <!-- Task Management Container -->
-  <div id="task-container" style="display:none;">
+  <div id="task-container">
     <h2>Your Tasks</h2>
 
     <!-- Task Filters -->
@@ -53,22 +174,126 @@
       <button type="submit">Add Task</button>
     </form>
 
-    <script>
-      // Handle Logout
-function logout() {
-    authToken = '';  // Clear the token
-    document.getElementById('auth-container').style.display = 'none';  // Show login form
-    document.getElementById('task-container').style.display = 'none';  // Hide task list
-    alert('Logged out successfully');
-  }
-  
-  // Add logout button to HTML
-  document.body.insertAdjacentHTML('beforeend', `
-    <button onclick="logout()">Logout</button>
-  `);
-    </script>
+    <!-- Logout Button -->
+    <button class="logout-button" onclick="logout()">Logout</button>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Check if user is logged in (check if token exists)
+    const authToken = localStorage.getItem('authToken');
+
+    if (authToken) {
+      document.getElementById('task-container').style.display = 'block';
+      document.getElementById('auth-container').style.display = 'none';
+      fetchTasks();  // Fetch and display tasks if logged in
+    } else {
+      window.location.href = '/login.html';  // Redirect to login page if not logged in
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('authToken');
+      window.location.href = '/login.html'; // Redirect to login after logout
+    }
+
+    // Fetch and display tasks
+    async function fetchTasks() {
+      const res = await fetch('/api/tasks', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const tasks = await res.json();
+      const taskList = document.getElementById('task-list');
+      taskList.innerHTML = ''; // Clear the task list before appending
+
+      tasks.forEach(task => {
+        const taskElement = document.createElement('li');
+        taskElement.innerHTML = `
+          ${task.title} - ${task.priority} - ${task.deadline}
+          <button onclick="editTask(${task.id})">Edit</button>
+          <button onclick="deleteTask(${task.id})">Delete</button>
+        `;
+        taskList.appendChild(taskElement);
+      });
+    }
+
+    // Handle Add Task
+    document.getElementById('add-task-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('task-title').value;
+      const description = document.getElementById('task-description').value;
+      const priority = document.getElementById('task-priority').value;
+      const deadline = document.getElementById('task-deadline').value;
+
+      const newTask = { title, description, priority, deadline };
+
+      const res = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (res.ok) {
+        fetchTasks(); // Refresh the task list after adding a new task
+      } else {
+        alert('Error adding task.');
+      }
+    });
+
+    // Edit Task function
+    function editTask(taskId) {
+      const taskTitle = prompt("Enter new title:");
+      const taskDescription = prompt("Enter new description:");
+      const taskPriority = prompt("Enter new priority (low, medium, high):");
+      const taskDeadline = prompt("Enter new deadline (YYYY-MM-DD):");
+
+      const updatedTask = {
+        title: taskTitle,
+        description: taskDescription,
+        priority: taskPriority,
+        deadline: taskDeadline
+      };
+
+      fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(updatedTask),
+      })
+      .then(res => {
+        if (res.ok) {
+          fetchTasks(); // Refresh the task list after editing
+        } else {
+          alert('Error editing task.');
+        }
+      });
+    }
+
+    // Delete Task function
+    function deleteTask(taskId) {
+      if (confirm("Are you sure you want to delete this task?")) {
+        fetch(`/api/tasks/${taskId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            fetchTasks(); // Refresh the task list after deleting
+          } else {
+            alert('Error deleting task.');
+          }
+        });
+      }
+    }
+  </script>
 </body>
 </html>
