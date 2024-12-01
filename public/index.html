@@ -229,7 +229,7 @@
 
       const newTask = { title, description, priority, deadline };
 
-      const res = await fetch('https://taskmaster-3bvssa.fly.dev/api/tasks', {
+      const res = await fetch('/api/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
