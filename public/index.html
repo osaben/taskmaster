@@ -198,7 +198,7 @@
 
     // Fetch and display tasks
     async function fetchTasks() {
-      const res = await fetch('https://taskmaster-3bvssa.fly.dev/api/tasks', {
+      const res = await fetch('/api/tasks', {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
