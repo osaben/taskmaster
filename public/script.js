@@ -140,15 +140,4 @@ async function deleteTask(id) {
     }
   }
   
-      // Handle Logout
-function logout() {
-    authToken = '';  // Clear the token
-    document.getElementById('auth-container').style.display = 'block';  // Show login form
-    document.getElementById('task-container').style.display = 'none';  // Hide task list
-    alert('Logged out successfully');
-  }
-  
-  // Add logout button to HTML
-  document.body.insertAdjacentHTML('beforeend', `
-    <button onclick="logout()">Logout</button>
-  `);
+      

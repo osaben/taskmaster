@@ -17,7 +17,7 @@
       <input type="password" id="login-password" placeholder="Password" required>
       <button type="submit">Login</button>
     </form>
-    <p>Dont have an account? <a href="/Register.html">Login here</a></p>
+    <p>Dont have an account? <a href="/Register.html">Register here</a></p>
   </div>
 
   <!-- Task Management Container -->
@@ -52,6 +52,21 @@
       <input type="date" id="task-deadline" required>
       <button type="submit">Add Task</button>
     </form>
+
+    <script>
+      // Handle Logout
+function logout() {
+    authToken = '';  // Clear the token
+    document.getElementById('auth-container').style.display = 'none';  // Show login form
+    document.getElementById('task-container').style.display = 'none';  // Hide task list
+    alert('Logged out successfully');
+  }
+  
+  // Add logout button to HTML
+  document.body.insertAdjacentHTML('beforeend', `
+    <button onclick="logout()">Logout</button>
+  `);
+    </script>
   </div>
 
   <script src="script.js"></script>

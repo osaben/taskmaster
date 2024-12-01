@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="register-container">
+        <h2>Register</h2>
+        <form id="register-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="/index.html">Login here</a></p>
+    </div>
+    
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+    
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+    
+            fetch('http://localhost:3000/api/auth/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();  // Parse response as JSON
+})
+.then(data => {
+    alert(data.message); // Success message
+  window.location.href = '/index.html'; 
+})
+.catch(error => {
+  console.error('Error:', error);
+});
+
+        });
+    </script>
+        
+</body>
+</html>
