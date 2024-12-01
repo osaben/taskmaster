@@ -7,7 +7,11 @@ const taskRoutes = require('./routes/tasks');
 const app = express();
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+  origin: 'https://taskmaster-swart-nine.vercel.app',  // Allow only your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],           // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization']    // Allowed headers
+}));
 
 // Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
